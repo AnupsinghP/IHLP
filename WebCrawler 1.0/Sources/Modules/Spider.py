@@ -5,7 +5,7 @@ Created on Nov 10, 2017
 '''
 import requests
 from bs4 import BeautifulSoup
-from wsgiref.util import application_uri
+from asyncio.log import logger
 
 #Spider Class to gather all the app web links for the analyzation.
 class SpiderClass:
@@ -13,25 +13,48 @@ class SpiderClass:
     def Spider(self, limit):
         page = 1
         
-        list = []
+        webAppList = []
         
         while page < limit:
-            url ='https://play.google.com/store/apps/new'
+            url =r'https://play.google.com/store/apps/new'
             
-            source_Code = requests.get(url)
+            try:
             
-            raw_text = source_Code.text
+                source_Code = requests.get(url)
+            
+                raw_text = source_Code.text
         
-            soup = BeautifulSoup(raw_text, "html.parser")
+                soup = BeautifulSoup(raw_text, "html.parser")
           
-            for link in soup.find_all('a',{'class': 'title'}):
-                hreff = "https://play.google.com" + link.get('href')
+                self.FetchAppLinks(soup, webAppList)
             
-                if((list.__contains__(hreff))!= True):
-                    list.append(str(hreff))
+            except requests.ConnectionError as connError:
+                logger.log("Connection Error while connecting to Play store: ", url," Error: ", connError)
+            
+            except requests.HTTPError as httpError:
+                logger.log("Invalid HTTP response to Play store: ", url, " Error: ", httpError)
+            
+            except requests.Timeout() as requestTimeoutError:
+                logger.log("Time-out to connect to Play store: ", url, " Error: ", requestTimeoutError)
+                
+            except requests.TooManyRedirects() as redirectsError:
+                logger.log("Too many redirects for connection to Play store: ", url, " Error: ", redirectsError)
+                
+            #except HTMLParseError as htmlParsingError: 
+            #    logger.log("HTMLParse Error: ", htmlParsingError)
+            
+            except Exception as e:
+                logger.log("Excpetion occured at Func Spider: ", e)
+                
             page += 1
         
-        return list
+        return webAppList
+    
+    def FetchAppLinks(self, soup, webAppList):
+        for link in soup.find_all('a',{'class': 'title'}):
+            hreff = "https://play.google.com" + link.get('href')
+            
+            if((webAppList.__contains__(hreff))!= True):
+                    webAppList.append(str(hreff)) 
         
-    #print(list)    
     

@@ -8,6 +8,7 @@ Created on Sep 28, 2017
 class AppDetails:
 
     def __init__(self):
+        self.title = None
         self.rating = None
         self.totalReviews = None
         self.genere = None
@@ -15,6 +16,6 @@ class AppDetails:
         self.noOfRatings = None
         self.author = None
         self.releaseDate = None
-        self.Installs = None
+        self.installs = None
         self.adult = False
         
