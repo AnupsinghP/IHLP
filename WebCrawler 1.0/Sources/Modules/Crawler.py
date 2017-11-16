@@ -122,8 +122,15 @@ class Crawler:
         appDetails.genere = genere.text.strip()
     
     def GetInstalls(self, soupObj, appDetails):
-        pull = soupObj.find(attrs={'itemprop': 'numDownloads'})
-        appDetails.Installs = pull.text.strip()
+        try:
+            pull = soupObj.find(attrs={'itemprop': 'numDownloads'})
+            appDetails.Installs = pull.text
+        
+        except TypeError as typeError:
+            logger.log("Type Error at GetInstalls: ", typeError)
+        
+        except Exception as e:
+            logger.log("Exception at GetInstalls: ", e)
         
     def GetTotalReviewers(self, soupObj, AppDetails):
         totalReviews = soupObj.find(attrs={'class': 'review-num'})
@@ -141,4 +148,4 @@ class Crawler:
         fetchedContents = contents.text.strip()
         
         if(fetchedContents.count('Mature') | fetchedContents.count('+')):
-                    appDetails.adult = True
+            appDetails.adult = True

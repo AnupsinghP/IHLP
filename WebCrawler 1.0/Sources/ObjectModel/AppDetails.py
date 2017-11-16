@@ -15,7 +15,6 @@ class AppDetails:
         self.price = None
         self.noOfRatings = None
         self.author = None
-        self.releaseDate = None
         self.installs = None
         self.adult = False
         

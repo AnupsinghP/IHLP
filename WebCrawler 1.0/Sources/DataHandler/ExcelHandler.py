@@ -39,7 +39,7 @@ class ExcelHandlerClass:
         worksheet3.write('H1', 'Installs', bold)
         worksheet3.write('I1', 'Adult', bold)
         
-        
+        print("Workbook created")
         workbook.close()
     
     def GetAppDetailsWorkSheet(self):
@@ -48,5 +48,5 @@ class ExcelHandlerClass:
     
     #Returns Worksheet for App details
     def CollectData(self, results):
-        sheet = self.GetAppDetailsWorkSheet()
+        print(results[0].title)
         

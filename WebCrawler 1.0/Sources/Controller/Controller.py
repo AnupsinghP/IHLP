@@ -3,7 +3,6 @@ Created on Sep 28, 2017
 
 @author: Anupsingh Pardeshi
 '''
-
 from Sources.Modules.Spider import SpiderClass
 from Sources.Modules.Crawler import Crawler
 from Sources.DataHandler.ExcelHandler import ExcelHandlerClass
@@ -20,7 +19,7 @@ class Controller:
     crawlerObj = Crawler()
     
     urlsList = spiderObj.Spider(2)
-    
+   
     #Using main process to create child processes which will fetch the details of fetched app links
     if __name__ == '__main__':
         
