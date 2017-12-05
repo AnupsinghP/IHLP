@@ -13,12 +13,18 @@ from Sources.ObjectModel.AppDetails import AppDetails
 
 #Crawler class to crawl the app web link and extract the data.
 class Crawler:
+    
+    def Cleaner(self, appUrlslist, fetchedUrlsList):
+        #removing the already fetched urls from appUrlslist
+        pendingAppUrlslist = [e for e in appUrlslist if e not in fetchedUrlsList]
+        
+        return pendingAppUrlslist
             
     def Crawl(self,appList):
        
         try:
             appPool = Pool()
-        
+            
             result = appPool.map(self.GooglePlayStoreCrawler, appList)
         
             appPool.close()
@@ -29,14 +35,14 @@ class Crawler:
                     
         except Exception as e:
             logger.critical(e)
-       
-        self.GooglePlayStoreCrawler(appList)
         
-    
     def GooglePlayStoreCrawler(self, appLink):
-         
         #for appLink in appList:
         appDetails = AppDetails()
+        
+        appDetails.url = appLink
+        
+        appDetails.appStore = "Google Play Store"
         
         #print(appLink)
         sourceCode = requests.get(appLink)
@@ -82,8 +88,9 @@ class Crawler:
         except Exception as e: 
             logger.log("Exception caught in threading in Crawler Class: ", e)
                         
-        
-        return appDetails
+        finally:
+            
+            return appDetails
     
     def GetPrice(self, soupObj, appDetails):
         priceList = soupObj.find('button',{'class': 'price buy id-track-click id-track-impression'})
@@ -100,9 +107,8 @@ class Crawler:
             price = re.sub('Buy', '', price)
             price = re.sub('$', '', price)
         
-            appDetails = price.strip()
-            
-            
+            appDetails.price = price.strip()
+                 
     def GetTitle(self, soupObj, appDetails):
         #User Rating
         title = soupObj.find(attrs={'class': 'id-app-title'})
@@ -115,7 +121,6 @@ class Crawler:
         
         appDetails.rating = score.text.strip()
         
-    
     def GetGenere(self, soupObj, appDetails):
         genere = soupObj.find(attrs={'itemprop': 'genre'})
         
@@ -123,8 +128,8 @@ class Crawler:
     
     def GetInstalls(self, soupObj, appDetails):
         try:
-            pull = soupObj.find(attrs={'itemprop': 'numDownloads'})
-            appDetails.Installs = pull.text
+            pull = soupObj.find('div', attrs={'class': 'content', 'itemprop' :'numDownloads'})
+            appDetails.installs = pull.text
         
         except TypeError as typeError:
             logger.log("Type Error at GetInstalls: ", typeError)
@@ -132,10 +137,9 @@ class Crawler:
         except Exception as e:
             logger.log("Exception at GetInstalls: ", e)
         
-    def GetTotalReviewers(self, soupObj, AppDetails):
-        totalReviews = soupObj.find(attrs={'class': 'review-num'})
-        
-        AppDetails.totalReviews = totalReviews
+    def GetTotalReviewers(self, soupObj, appDetails):
+        totalReviews = soupObj.find('span', attrs={'class': 'reviews-num'})
+        appDetails.totalReviews = totalReviews.text
     
     def GetDeveloper(self, soupObj, appDetails):    
         dev = soupObj.find(attrs={'class': 'document-subtitle primary'})

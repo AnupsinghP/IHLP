@@ -16,11 +16,10 @@ class SpiderClass:
         webAppList = []
         
         while page < limit:
-            url =r'https://play.google.com/store/apps/new'
-            
+            url = r"https://play.google.com/store/apps/collection/topselling_new_free"
             try:
             
-                source_Code = requests.get(url)
+                source_Code = requests.get(url, timeout = 10)
             
                 raw_text = source_Code.text
         
@@ -41,10 +40,13 @@ class SpiderClass:
                 logger.log("Too many redirects for connection to Play store: ", url, " Error: ", redirectsError)
                 
             #except HTMLParseError as htmlParsingError: 
-            #    logger.log("HTMLParse Error: ", htmlParsingError)
+            #   logger.log("HTMLParse Error: ", htmlParsingError)
             
             except Exception as e:
                 logger.log("Excpetion occured at Func Spider: ", e)
+            
+            except requests.exceptions.Timeout as timeoutException:
+                logger.log("Timeout Exception", timeoutException)
                 
             page += 1
         

@@ -17,4 +17,6 @@ class AppDetails:
         self.author = None
         self.installs = None
         self.adult = False
+        self.url = None
+        self.appStore = None
         
