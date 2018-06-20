@@ -42,4 +42,4 @@ class Controller:
     
             r = DBHandler.CollectAppDetails(detailsList)
         
-            print(r)
+            print(r+1)
